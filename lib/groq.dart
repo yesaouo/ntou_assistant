@@ -63,11 +63,12 @@ class GroqCard extends StatefulWidget {
 
 class _GroqCardState extends State<GroqCard> {
   final List<String> menuItems = [
+    'llama3-8b',
     '112學年度第1學期行事曆',
     '112學年度第2學期行事曆',
-    '113學年度第1學期行事曆'
+    '113學年度第1學期行事曆',
   ];
-  String dropdownValue = '112學年度第1學期行事曆';
+  String dropdownValue = 'llama3-8b';
   final TextEditingController textEditingController = TextEditingController();
   String displayText = '';
 
@@ -84,6 +85,14 @@ class _GroqCardState extends State<GroqCard> {
               onChanged: (String? newValue) {
                 setState(() {
                   dropdownValue = newValue!;
+                  if (dropdownValue != 'llama3-8b') {
+                    if (dropdownValue == 'llama3-8b') {
+                      
+                    } else {
+                      dropdownValue = 'llama3-8b';
+
+                    }
+                  }
                 });
               },
               items: menuItems.map<DropdownMenuItem<String>>((String value) {
@@ -117,8 +126,7 @@ class _GroqCardState extends State<GroqCard> {
                       );
                       await groq.post();
                       setState(() {
-                        displayText =
-                            '選擇模型: $dropdownValue\n回覆內容: ${groq.assistant}';
+                        displayText = '選擇模型: $dropdownValue\n${groq.assistant}';
                       });
                     },
                   ),
@@ -126,7 +134,7 @@ class _GroqCardState extends State<GroqCard> {
               ),
             ),
             Container(
-              height: 100,
+              height: 200,
               width: double.infinity,
               padding: const EdgeInsets.all(10),
               color: Colors.white60,

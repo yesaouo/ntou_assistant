@@ -5,79 +5,100 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Bus {
-  final String? city; // = 'Keelung';
-  String? stopName; // = ['海大祥豐校門','海大濱海校門','海大體育館'];
-  String? url;
+  final String city;
+  String? stopName;
+  late String url;
   List<BusData> datas = [];
-  Map<String, dynamic> destinationStopsMap = {};
+  Map<String, dynamic> destinationStopsMap = {
+    '303576': '八斗子車站',
+    '303002': '圓山轉運站(玉門)',
+    '134300': '福隆',
+    '192223': '國家新城',
+  };
+
   Bus({required this.city, required this.stopName}) {
-    url =
-        'https://tdx.transportdata.tw/api/basic/v2/Bus/EstimatedTimeOfArrival/City/$city?%24filter=StopName%2FZh_tw%20eq%20%27$stopName%27%20and%20IsLastBus%20eq%20false%20and%20EstimateTime%20ne%20null&%24orderby=EstimateTime&%24format=JSON';
+    updateUrl();
+  }
+
+  void updateUrl() {
+    if (stopName == '公路客運') {
+      url =
+          'https://tdx.transportdata.tw/api/basic/v2/Bus/EstimatedTimeOfArrival/InterCity/1579?%24filter=StopName%2FZh_tw%20eq%20%27海大(濱海校門)%27%20and%20IsLastBus%20eq%20false%20and%20EstimateTime%20ne%20null&%24orderby=EstimateTime&%24format=JSON';
+    } else if (stopName == '新北公車') {
+      url =
+          'https://tdx.transportdata.tw/api/basic/v2/Bus/EstimatedTimeOfArrival/City/NewTaipei/791?%24filter=StopName%2FZh_tw%20eq%20%27海大(濱海校門)%27%20and%20EstimateTime%20ne%20null&%24orderby=EstimateTime&%24format=JSON';
+    } else {
+      url =
+          'https://tdx.transportdata.tw/api/basic/v2/Bus/EstimatedTimeOfArrival/City/$city?%24filter=StopName%2FZh_tw%20eq%20%27海大$stopName%27%20and%20IsLastBus%20eq%20false%20and%20EstimateTime%20ne%20null&%24orderby=EstimateTime&%24format=JSON';
+    }
   }
 
   void setStopName(String name) {
     stopName = name;
-    url =
-        'https://tdx.transportdata.tw/api/basic/v2/Bus/EstimatedTimeOfArrival/City/$city?%24filter=StopName%2FZh_tw%20eq%20%27$stopName%27%20and%20IsLastBus%20eq%20false%20and%20EstimateTime%20ne%20null&%24orderby=EstimateTime&%24format=JSON';
+    updateUrl();
   }
 
   Future<Map<String, String>> getHeader() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      int? expiration = prefs.getInt('tdx_expiration');
-      String? token = prefs.getString('tdx_token');
+    final prefs = await SharedPreferences.getInstance();
+    int? expiration = prefs.getInt('tdx_expiration');
+    String? token = prefs.getString('tdx_token');
 
-      if (token == null ||
-          expiration == null ||
-          DateTime.now().millisecondsSinceEpoch >= expiration) {
-        final response = await http.post(
-          Uri.parse(
-              'https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token'),
-          headers: {
-            'content-type': 'application/x-www-form-urlencoded',
-          },
-          body: {
-            'grant_type': 'client_credentials',
-            'client_id': dotenv.env['tdx_client_id'],
-            'client_secret': dotenv.env['tdx_client_secret'],
-          },
-        );
+    if (token == null ||
+        expiration == null ||
+        DateTime.now().millisecondsSinceEpoch >= expiration) {
+      final response = await http.post(
+        Uri.parse(
+            'https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token'),
+        headers: {'content-type': 'application/x-www-form-urlencoded'},
+        body: {
+          'grant_type': 'client_credentials',
+          'client_id': dotenv.env['tdx_client_id'],
+          'client_secret': dotenv.env['tdx_client_secret'],
+        },
+      );
 
-        final responseBody = jsonDecode(response.body);
-        token = responseBody['access_token'];
-        expiration = (DateTime.now().millisecondsSinceEpoch +
-            responseBody['expires_in'] * 1000) as int?;
+      final responseBody = jsonDecode(response.body);
+      token = responseBody['access_token'];
+      expiration = (DateTime.now().millisecondsSinceEpoch +
+          responseBody['expires_in'] * 1000) as int?;
 
-        await prefs.setInt('tdx_expiration', expiration!);
-        await prefs.setString('tdx_token', token!);
-      }
-
-      return {
-        'accept': 'application/json',
-        'authorization': 'Bearer $token',
-      };
-    } catch (e) {
-      print('Error: $e');
-      return {};
+      await prefs.setInt('tdx_expiration', expiration!);
+      await prefs.setString('tdx_token', token!);
     }
+
+    return {
+      'accept': 'application/json',
+      'authorization': 'Bearer $token',
+    };
   }
 
   Future<void> get() async {
     try {
       datas = [];
-      final response = await http.get(
-        Uri.parse(url!),
-        headers: await getHeader(),
-      );
+      final response =
+          await http.get(Uri.parse(url), headers: await getHeader());
       if (response.statusCode == 200) {
         final searchResponse = jsonDecode(response.body);
-        for (var json in searchResponse) {
-          DateTime now = DateTime.now();
-          DateTime dataTime = DateTime.parse(json['DataTime']);
-          Duration difference = dataTime.difference(now);
-          json['EstimateTime'] += difference.inSeconds;
-          if (json['EstimateTime'] > 0) {
-            datas.add(BusData.fromJson(json));
+        DateTime now = DateTime.now();
+
+        if (stopName == '新北公車') {
+          for (var json in searchResponse) {
+            DateTime dataTime = DateTime.parse(json['SrcUpdateTime']);
+            Duration difference = dataTime.difference(now);
+            json['EstimateTime'] += difference.inSeconds;
+            if (json['EstimateTime'] > 0) {
+              json['DestinationStop'] = json['Direction'] == 0 ? '134300' : '192223';
+              datas.add(BusData.fromJson(json));
+            }
+          }
+        } else {
+          for (var json in searchResponse) {
+            DateTime dataTime = DateTime.parse(json['DataTime']);
+            Duration difference = dataTime.difference(now);
+            json['EstimateTime'] += difference.inSeconds;
+            if (json['EstimateTime'] > 0) {
+              datas.add(BusData.fromJson(json));
+            }
           }
         }
 
@@ -86,28 +107,33 @@ class Bus {
             destinationStopsMap[data.destinationStop] = null;
           }
         }
-        List<String> stopIDConditions = destinationStopsMap.entries
-            .where((entry) => entry.value == null)
-            .map((entry) => "StopID eq '${entry.key}'")
-            .toList();
-        if (stopIDConditions.length > 0) {
-          String queryString = stopIDConditions.join(' or ');
-          String stopUrl =
-              'https://tdx.transportdata.tw/api/basic/v2/Bus/Stop/City/Keelung?%24filter=$queryString&%24format=JSON';
-          final stopResponse = await http.get(
-            Uri.parse(stopUrl),
-            headers: await getHeader(),
-          );
-          final stops = jsonDecode(stopResponse.body);
-          for (var stop in stops) {
-            destinationStopsMap[stop['StopID']] = stop['StopName']['Zh_tw'];
-          }
+
+        if (destinationStopsMap.values.any((value) => value == null)) {
+          await fetchDestinationStopNames();
         }
       } else {
-        print('error ${response.statusCode}');
+        throw Exception('Failed to load data');
       }
     } catch (e) {
-      print('error $e');
+      print('Error: $e');
+    }
+  }
+
+  Future<void> fetchDestinationStopNames() async {
+    List<String> stopIDConditions = destinationStopsMap.entries
+        .where((entry) => entry.value == null)
+        .map((entry) => "StopID eq '${entry.key}'")
+        .toList();
+    if (stopIDConditions.isNotEmpty) {
+      String queryString = stopIDConditions.join(' or ');
+      String stopUrl =
+          'https://tdx.transportdata.tw/api/basic/v2/Bus/Stop/City/$city?%24filter=$queryString&%24format=JSON';
+      final stopResponse =
+          await http.get(Uri.parse(stopUrl), headers: await getHeader());
+      final stops = jsonDecode(stopResponse.body);
+      for (var stop in stops) {
+        destinationStopsMap[stop['StopID']] = stop['StopName']['Zh_tw'];
+      }
     }
   }
 }
@@ -143,20 +169,26 @@ class BusCard extends StatefulWidget {
 }
 
 class BusCardState extends State<BusCard> {
-  final Bus bus = Bus(city: 'Keelung', stopName: '海大祥豐校門');
-  final List<String> menuItems = ['海大祥豐校門', '海大濱海校門', '海大體育館'];
-  String dropdownValue = '海大祥豐校門';
+  final Bus bus = Bus(city: 'Keelung', stopName: '祥豐校門');
+  final List<String> menuItems = ['祥豐校門', '濱海校門', '體育館', '公路客運', '新北公車'];
+  String dropdownValue = '祥豐校門';
   late Future<void> _future;
   String? _refreshTime;
 
   Future<void> refresh() async {
-    setState(() {
-      _future = bus.get();
-    });
-    await _future;
-    setState(() {
-      _refreshTime = DateTime.now().toLocal().toString().substring(0, 19);
-    });
+    try {
+      setState(() {
+        _future = bus.get();
+      });
+      await _future;
+      setState(() {
+        _refreshTime = DateTime.now().toLocal().toString().substring(0, 19);
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('刷新失敗: $e')),
+      );
+    }
   }
 
   @override
@@ -174,13 +206,12 @@ class BusCardState extends State<BusCard> {
           DropdownButton<String>(
             isExpanded: true,
             value: dropdownValue,
-            onChanged: (String? newValue) {
+            onChanged: (String? newValue) async {
               setState(() {
                 dropdownValue = newValue!;
                 bus.setStopName(dropdownValue);
-                _future = bus.get();
-                _refreshTime = DateTime.now().toLocal().toString().substring(0, 19);
               });
+              await refresh();
             },
             items: menuItems.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
@@ -210,7 +241,7 @@ class BusCardState extends State<BusCard> {
                   return Column(
                     children: [
                       SizedBox(
-                        height: 150,
+                        height: 300,
                         child: BusList(
                           busDatas: bus.datas,
                           stopsMap: bus.destinationStopsMap,
@@ -241,7 +272,9 @@ class BusList extends StatelessWidget {
       itemBuilder: (context, index) {
         return ListTile(
           title: Text(busDatas[index].routeName),
-          subtitle: Text('往 ${stopsMap[busDatas[index].destinationStop]}'),
+          subtitle: Text(
+            '往 ${stopsMap[busDatas[index].destinationStop] ?? busDatas[index].destinationStop}',
+          ),
           trailing: Text(busDatas[index].estimateTime < 60
               ? '進站中'
               : '${busDatas[index].estimateTime ~/ 60} 分鐘'),

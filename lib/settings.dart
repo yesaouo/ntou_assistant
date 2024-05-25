@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ntou_assistant/groq.dart';
+import 'package:ntou_assistant/map.dart';
+import 'package:ntou_assistant/website.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -8,8 +11,21 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  final List<Widget> widgets = [
+    const WebsiteCard(),
+    const MapCard(),
+    const GroqCard(),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return ListView.separated(
+      padding: const EdgeInsets.all(8),
+      itemCount: widgets.length,
+      itemBuilder: (BuildContext context, int index) {
+        return widgets[index];
+      },
+      separatorBuilder: (BuildContext context, int index) => const Divider(),
+    );
   }
 }

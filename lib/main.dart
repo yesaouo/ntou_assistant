@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:ntou_assistant/bus.dart';
-import 'package:ntou_assistant/groq.dart';
-import 'package:ntou_assistant/map.dart';
 import 'package:ntou_assistant/settings.dart';
 import 'package:ntou_assistant/weather.dart';
 
@@ -60,8 +58,8 @@ class _MyAppState extends State<MyApp> {
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Settings',
+              icon: Icon(Icons.more_horiz),
+              label: 'More',
             ),
           ],
           currentIndex: _selectedIndex,
@@ -76,8 +74,7 @@ class _MyAppState extends State<MyApp> {
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
 
-  final GlobalKey<WeatherCardState> weatherCardKey =
-      GlobalKey<WeatherCardState>();
+  final GlobalKey<WeatherCardState> weatherCardKey = GlobalKey<WeatherCardState>();
   final GlobalKey<BusCardState> busCardKey = GlobalKey<BusCardState>();
 
   Future<void> refresh() async {
@@ -90,8 +87,6 @@ class MyHomePage extends StatelessWidget {
     final List<Widget> widgets = [
       WeatherCard(key: weatherCardKey),
       BusCard(key: busCardKey),
-      const GroqCard(),
-      const MapCard(),
     ];
 
     return RefreshIndicator(

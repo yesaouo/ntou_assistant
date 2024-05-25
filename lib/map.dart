@@ -24,7 +24,13 @@ class _MapCardState extends State<MapCard> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            const Text('Google Maps'),
+            const Text(
+              'Google Maps',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
