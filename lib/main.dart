@@ -20,7 +20,7 @@ class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
   static final List<Widget> _widgetOptions = <Widget>[
     MyHomePage(),
-    SettingsPage(),
+    const SettingsPage(),
   ];
   void _onItemTapped(int index) {
     setState(() {

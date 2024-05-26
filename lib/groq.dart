@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class Groq {
   String? apiKey = dotenv.env['groq'];
@@ -62,15 +63,29 @@ class GroqCard extends StatefulWidget {
 }
 
 class _GroqCardState extends State<GroqCard> {
-  final List<String> menuItems = [
-    'llama3-8b',
-    '112學年度第1學期行事曆',
-    '112學年度第2學期行事曆',
-    '113學年度第1學期行事曆',
-  ];
-  String dropdownValue = 'llama3-8b';
+  List<String> menuItems = [];
+  String dropdownValue = '';
   final TextEditingController textEditingController = TextEditingController();
   String displayText = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMenuItems();
+  }
+
+  Future<void> _loadMenuItems() async {
+    try {
+      String content = await rootBundle.loadString('assets/calendar/menu.txt');
+      List<String> lines = content.split('\n');
+      setState(() {
+        menuItems = lines.where((line) => line.trim().isNotEmpty).toList();
+        dropdownValue = menuItems.isNotEmpty ? menuItems[0] : '';
+      });
+    } catch (e) {
+      print('Failed to load menu items: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,14 +100,6 @@ class _GroqCardState extends State<GroqCard> {
               onChanged: (String? newValue) {
                 setState(() {
                   dropdownValue = newValue!;
-                  if (dropdownValue != 'llama3-8b') {
-                    if (dropdownValue == 'llama3-8b') {
-                      
-                    } else {
-                      dropdownValue = 'llama3-8b';
-
-                    }
-                  }
                 });
               },
               items: menuItems.map<DropdownMenuItem<String>>((String value) {
@@ -120,14 +127,21 @@ class _GroqCardState extends State<GroqCard> {
                   IconButton(
                     icon: const Icon(Icons.send),
                     onPressed: () async {
-                      final Groq groq = Groq(
-                        system: '現在時間 ${DateTime.now().toString()}。',
-                        user: textEditingController.text,
-                      );
-                      await groq.post();
-                      setState(() {
-                        displayText = '選擇模型: $dropdownValue\n${groq.assistant}';
-                      });
+                      RegExp regExp = RegExp(r'(\d{3})學年度第(\d)學期');
+                      Match? match = regExp.firstMatch(dropdownValue);
+                      if (match != null) {
+                        String year = match.group(1)!;
+                        String semester = match.group(2)!;
+                        String content = await rootBundle.loadString('assets/calendar/$year-$semester.txt');
+                        final Groq groq = Groq(
+                          system: '現在時間 ${DateTime.now().toString()}。$content',
+                          user: textEditingController.text,
+                        );
+                        await groq.post();
+                        setState(() {
+                          displayText = '選擇模型: $dropdownValue\n${groq.assistant}';
+                        });
+                      }
                     },
                   ),
                 ],
