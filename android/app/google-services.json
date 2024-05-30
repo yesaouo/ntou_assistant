@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "348385625862",
+    "project_id": "ntou-assistant",
+    "storage_bucket": "ntou-assistant.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:348385625862:android:a094260e1fe97da0774087",
+        "android_client_info": {
+          "package_name": "com.example.ntou_assistant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "348385625862-14k14j6gc4a1ljnud2obgsi5sk861rsi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ntou_assistant",
+            "certificate_hash": "397932f11956a16effef2bfe951ff0202e8d7e8b"
+          }
+        },
+        {
+          "client_id": "348385625862-avbuivgucs4lvqulbp9lhu6l96cq2b5i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKwcBx-oaUKnGd9UAkU56XzjNOJC1rOgM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "348385625862-avbuivgucs4lvqulbp9lhu6l96cq2b5i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "348385625862-1lhhrnmkc09qhknc6gv6dnjlviudqpil.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.ntouAssistant"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -134,7 +134,7 @@ class _GroqCardState extends State<GroqCard> {
                         String semester = match.group(2)!;
                         String content = await rootBundle.loadString('assets/calendar/$year-$semester.txt');
                         final Groq groq = Groq(
-                          system: '現在時間 ${DateTime.now().toString()}。$content',
+                          system: '現在時間 ${DateTime.now().toString().substring(0, 16)}。$content',
                           user: textEditingController.text,
                         );
                         await groq.post();

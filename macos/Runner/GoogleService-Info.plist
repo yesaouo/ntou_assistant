@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>348385625862-q0ckebhu2glg7m5qaivt446e42v9o36c.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.348385625862-q0ckebhu2glg7m5qaivt446e42v9o36c</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>348385625862-14k14j6gc4a1ljnud2obgsi5sk861rsi.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCW18hSTJy3qNeJltw2luZsy-qaTL3Y26o</string>
+	<key>GCM_SENDER_ID</key>
+	<string>348385625862</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.ntouAssistant.RunnerTests</string>
+	<key>PROJECT_ID</key>
+	<string>ntou-assistant</string>
+	<key>STORAGE_BUCKET</key>
+	<string>ntou-assistant.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:348385625862:ios:dbb07e71c0ab8f95774087</string>
+</dict>
+</plist>

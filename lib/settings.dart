@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ntou_assistant/groq.dart';
+import 'package:ntou_assistant/firebase.dart';
 import 'package:ntou_assistant/map.dart';
 import 'package:ntou_assistant/website.dart';
 
@@ -14,7 +14,7 @@ class _SettingsPageState extends State<SettingsPage> {
   final List<Widget> widgets = [
     const WebsiteCard(),
     const MapCard(),
-    const GroqCard(),
+    const AuthCheck(),
   ];
 
   @override
