@@ -127,19 +127,28 @@ class _GroqCardState extends State<GroqCard> {
                   IconButton(
                     icon: const Icon(Icons.send),
                     onPressed: () async {
-                      RegExp regExp = RegExp(r'(\d{3})學年度第(\d)學期');
-                      Match? match = regExp.firstMatch(dropdownValue);
-                      if (match != null) {
-                        String year = match.group(1)!;
-                        String semester = match.group(2)!;
-                        String content = await rootBundle.loadString('assets/calendar/$year-$semester.txt');
-                        final Groq groq = Groq(
-                          system: '現在時間 ${DateTime.now().toString().substring(0, 16)}。$content',
-                          user: textEditingController.text,
-                        );
-                        await groq.post();
+                      try {
+                        RegExp regExp = RegExp(r'(\d{3})學年度第(\d)學期');
+                        Match? match = regExp.firstMatch(dropdownValue);
+                        if (match != null) {
+                          String year = match.group(1)!;
+                          String semester = match.group(2)!;
+                          String content = await rootBundle.loadString(
+                              'assets/calendar/$year-$semester.txt');
+                          final Groq groq = Groq(
+                            system:
+                                '現在時間 ${DateTime.now().toString().substring(0, 16)}。$content',
+                            user: textEditingController.text,
+                          );
+                          await groq.post();
+                          setState(() {
+                            displayText =
+                                '選擇模型: $dropdownValue\n${groq.assistant}';
+                          });
+                        }
+                      } catch (e) {
                         setState(() {
-                          displayText = '選擇模型: $dropdownValue\n${groq.assistant}';
+                          displayText = 'API 使用已達到上限，請稍後再做嘗試。';
                         });
                       }
                     },

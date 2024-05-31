@@ -40,7 +40,8 @@ class _MyAppState extends State<MyApp> {
       title: 'NTOU Assistant',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(0xff, 0x06, 0x3f, 0x5c)),
         useMaterial3: true,
       ),
       home: Scaffold(
