@@ -131,7 +131,7 @@ class ForecastCardState extends State<ForecastCard> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text('${(index + 1) * 6}小時後'),
+                        Text('${(index + 1) * 6} hrs'),
                         const SizedBox(
                           height: 10,
                         ),
