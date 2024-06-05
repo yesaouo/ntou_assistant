@@ -32,7 +32,7 @@ class Forecast {
     url =
         'https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-D0047-049?Authorization=$apiKey&locationName=$locationName&elementName=Wx,T,PoP6h&timeFrom=${times.first}&timeTo=${times.last}';
   }
-  
+
   bool dataNull() {
     return dataWx.length != 5 || dataT.length != 5 || dataPoP6h.length != 5;
   }
@@ -148,13 +148,19 @@ class ForecastCardState extends State<ForecastCard> {
                         const SizedBox(
                           height: 10,
                         ),
-                        Text('${weather.dataT[index]}°'),
+                        Text(
+                          '${weather.dataT[index]}°',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         const SizedBox(
                           height: 10,
                         ),
                         Image.asset(
                           'assets/forecast/umbrella.png',
-                          height: 16,
+                          height: 20,
                         ),
                         Text('${weather.dataPoP6h[index]}%'),
                       ],

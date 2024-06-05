@@ -87,7 +87,8 @@ class Bus {
             Duration difference = dataTime.difference(now);
             json['EstimateTime'] += difference.inSeconds;
             if (json['EstimateTime'] > 0) {
-              json['DestinationStop'] = json['Direction'] == 0 ? '134300' : '192223';
+              json['DestinationStop'] =
+                  json['Direction'] == 0 ? '134300' : '192223';
               datas.add(BusData.fromJson(json));
             }
           }
@@ -271,7 +272,10 @@ class BusList extends StatelessWidget {
       itemCount: busDatas.length,
       itemBuilder: (context, index) {
         return ListTile(
-          title: Text(busDatas[index].routeName),
+          title: Text(
+            busDatas[index].routeName,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
           subtitle: Text(
             '往 ${stopsMap[busDatas[index].destinationStop] ?? busDatas[index].destinationStop}',
           ),

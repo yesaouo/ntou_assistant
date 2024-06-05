@@ -146,7 +146,8 @@ class WeatherCardState extends State<WeatherCard> {
                       ),
                       Text('本日累積降水量: ${weather.data?.precipitation} mm'),
                       const ForecastCard(),
-                      Text('觀測時間: ${weather.data?.dateTime.substring(0, 19).replaceAll('T', ' ')}'),
+                      Text(
+                          '觀測時間: ${weather.data?.dateTime.substring(0, 19).replaceAll('T', ' ')}'),
                     ],
                   );
                 }
@@ -178,6 +179,7 @@ class WindWidget extends StatelessWidget {
           child: const Icon(
             Icons.arrow_upward,
             size: 50,
+            color: Colors.blueGrey,
           ),
         ),
       ],
@@ -277,7 +279,10 @@ class HumidityWidget extends StatelessWidget {
         ),
         Text(
           '$humidity%',
-          style: const TextStyle(fontSize: 25),
+          style: const TextStyle(
+            fontSize: 25,
+            color: Colors.lightBlueAccent,
+          ),
         ),
       ],
     );

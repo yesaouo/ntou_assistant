@@ -12,7 +12,7 @@ class Groq {
     "messages": [],
     "model": "llama3-70b-8192",
     "temperature": 1,
-    "max_tokens": 2048,
+    "max_tokens": 1200,
     "top_p": 1,
     "stream": false,
     "stop": null,
@@ -137,7 +137,7 @@ class _GroqCardState extends State<GroqCard> {
                               'assets/calendar/$year-$semester.txt');
                           final Groq groq = Groq(
                             system:
-                                '現在時間 ${DateTime.now().toString().substring(0, 16)}。$content',
+                                '現在時間 ${DateTime.now().toString().substring(0, 16)}。行事曆學年度為民國年。$content',
                             user: textEditingController.text,
                           );
                           await groq.post();
