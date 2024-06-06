@@ -1,6 +1,6 @@
 {
-    "name": "ntou_assistant",
-    "short_name": "ntou_assistant",
+    "name": "NTOU Assistant",
+    "short_name": "NTOU Assistant",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
