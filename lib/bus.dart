@@ -195,8 +195,22 @@ class BusCardState extends State<BusCard> {
   @override
   void initState() {
     super.initState();
+    _loadDropdownValue();
     _future = bus.get();
     _refreshTime = DateTime.now().toLocal().toString().substring(0, 19);
+  }
+
+  Future<void> _loadDropdownValue() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      dropdownValue = prefs.getString('bus_stop') ?? '祥豐校門';
+      bus.setStopName(dropdownValue);
+    });
+  }
+
+  Future<void> _saveDropdownValue(String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('bus_stop', value);
   }
 
   @override
@@ -212,6 +226,7 @@ class BusCardState extends State<BusCard> {
                 dropdownValue = newValue!;
                 bus.setStopName(dropdownValue);
               });
+              await _saveDropdownValue(dropdownValue);
               await refresh();
             },
             items: menuItems.map<DropdownMenuItem<String>>((String value) {
